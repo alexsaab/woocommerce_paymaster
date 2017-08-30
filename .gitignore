@@ -1,0 +1,27 @@
+# Created by .ignore support plugin (hsz.mobi)
+/wp-includes/
+/wp-admin/
+/wp-mail.php
+/wp-trackback.php
+/license.txt
+/wp-cron.php
+/wp-login.php
+/index.php
+/wp-links-opml.php
+/wp-activate.php
+/wp-config-sample.php
+/wp-settings.php
+/wp-signup.php
+/readme.html
+/wp-load.php
+/.htaccess
+/~$structions.docx
+/wp-blog-header.php
+/wp-comments-post.php
+/wp-config.php
+/xmlrpc.php
+/wp-content/
+/wp-content/index.php
+/wp-content/plugins/index.php
+/wp-content/plugins/hello.php
+!/wp-content/plugins/paymaster-for-woocommerce/

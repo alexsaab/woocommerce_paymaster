@@ -10,8 +10,7 @@ Allows you to use Paymaster payment gateway with the WooCommerce plugin.
 == Description ==
 
 После активации плагина через панель управления в WooCommerce прописывем
-Логин мерчат, пароль 1, пароль 2 узнать их можно в [личном кабинете paymaster](https://paymaster.ru/partners/ru)
-
+Логин мерчат, секретная фраза, метод шифрования и т.д., узнать их можно в [личном кабинете paymaster](https://paymaster.ru/partners/ru)
 
 В Paymaster прописываем, как POST запросы:
 <ul style="list-style:none;">
