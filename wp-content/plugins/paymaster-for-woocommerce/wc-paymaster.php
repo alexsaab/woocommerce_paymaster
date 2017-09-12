@@ -293,7 +293,7 @@ endif;
             foreach ($order->get_items() as $product) {
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"]  = $product['name'];
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"]   = $product['quantity'];
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = number_format($product['total'], 2, '.', '');
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = number_format($product['total']/$product['quantity'], 2, '.', '');
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"]   = $this->paymaster_vat_products;
                 $pos++;
             }
@@ -325,7 +325,7 @@ endif;
 
             return array(
                 'result'   => 'success',
-                'redirect' => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay')))),
+                'redirect' => add_query_arg('order', $order_id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay')))),
             );
         }
 

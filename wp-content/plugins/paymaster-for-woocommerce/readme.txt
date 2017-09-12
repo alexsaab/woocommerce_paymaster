@@ -14,10 +14,16 @@ Allows you to use Paymaster payment gateway with the WooCommerce plugin.
 
 В Paymaster прописываем, как POST запросы:
 <ul style="list-style:none;">
-<li>Result URL: http://your_domain/?wc-api=wc_paymaster&paymaster=result</li>
+<li>Result URL: http://your_domain/?wc-api=wc_paymaster&paymaster=result</li
 <li>Success URL: http://your_domain/?wc-api=wc_paymaster&paymaster=success</li>
 <li>Fail URL: http://your_domain/?wc-api=wc_paymaster&paymaster=fail</li>
 <li>Метод отсылки данных: POST</li>
+</ul>
+
+Далее ставим галки:
+<ul style="list-style:none;">
+<li>Не проверять уникальность номера счета для отклоненных платежей</li>
+<li>Повторно отправлять Payment Notification при сбоях</li>
 </ul>
 
 Более подробно на [странице плагина](https://github.com/alexsaab/woocommerce-paymaster)
