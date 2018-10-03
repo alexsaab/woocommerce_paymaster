@@ -3,15 +3,14 @@
 Plugin Name: PayMaster Payment Gateway
 Plugin URI: https://www.agaxx.com
 Description: Allows you to use PayMaster payment gateway with the WooCommerce plugin.
-Version: 1.1
+Version: 1.0
 Author: Alex Agafonov
 Author URI: https://www.agaxx.com
  */
 
 //TODO: Выбор платежной системы на стороне магазина
 
-if (!defined('ABSPATH'))
-{
+if (!defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
@@ -23,8 +22,7 @@ if (!defined('ABSPATH'))
  */
 function paymaster_rub_currency_symbol($currency_symbol, $currency)
 {
-    if ($currency == "RUB")
-    {
+    if ($currency == "RUB") {
         $currency_symbol = 'р.';
     }
 
@@ -46,13 +44,11 @@ add_filter('woocommerce_currencies', 'paymaster_rub_currency', 10, 1);
 add_action('plugins_loaded', 'woocommerce_paymaster', 0);
 function woocommerce_paymaster()
 {
-    if (!class_exists('WC_Payment_Gateway'))
-    {
+    if (!class_exists('WC_Payment_Gateway')) {
         return;
     }
     // if the WC payment gateway class is not available, do nothing
-    if (class_exists('WC_PAYMASTER'))
-    {
+    if (class_exists('WC_PAYMASTER')) {
         return;
     }
 
@@ -65,30 +61,29 @@ function woocommerce_paymaster()
 
             global $woocommerce;
 
-            $this->id         = 'paymaster';
-            $this->icon       = apply_filters('woocommerce_paymaster_icon', '' . $plugin_dir . 'paymaster.png');
+            $this->id = 'paymaster';
+            $this->icon = apply_filters('woocommerce_paymaster_icon', '' . $plugin_dir . 'paymaster.png');
             $this->has_fields = false;
-            $this->liveurl    = 'https://paymaster.ru/Payment/Init';
+            $this->liveurl = 'https://paymaster.ru/Payment/Init';
 
             // Load the settings
             $this->init_form_fields();
             $this->init_settings();
 
             // Define user set variables
-            $this->title                  = $this->get_option('title');
-            $this->paymaster_merchant     = $this->get_option('paymaster_merchant');
-            $this->paymaster_secret       = $this->get_option('paymaster_secret');
-            $this->paymaster_hash_method  = $this->get_option('paymaster_hash_method');
+            $this->title = $this->get_option('title');
+            $this->paymaster_merchant = $this->get_option('paymaster_merchant');
+            $this->paymaster_secret = $this->get_option('paymaster_secret');
+            $this->paymaster_hash_method = $this->get_option('paymaster_hash_method');
             $this->paymaster_vat_products = $this->get_option('paymaster_vat_products');
             $this->paymaster_vat_delivery = $this->get_option('paymaster_vat_delivery');
-            $this->testmode               = $this->get_option('testmode');
-            $this->debug                  = $this->get_option('debug');
-            $this->description            = $this->get_option('description');
-            $this->instructions           = $this->get_option('instructions');
+            $this->paymaster_order_status = $this->get_option('paymaster_order_status');
+            $this->debug = $this->get_option('debug');
+            $this->description = $this->get_option('description');
+            $this->instructions = $this->get_option('instructions');
 
             // Logs
-            if (($this->debug == 'yes') && (method_exists($woocommerce, 'logger')))
-            {
+            if (($this->debug == 'yes') && (method_exists($woocommerce, 'logger'))) {
                 $this->log = $woocommerce->logger();
             }
 
@@ -102,8 +97,7 @@ function woocommerce_paymaster()
             // Payment listener/API hook
             add_action('woocommerce_api_wc_' . $this->id, array($this, 'check_response'));
 
-            if (!$this->is_valid_for_use())
-            {
+            if (!$this->is_valid_for_use()) {
                 $this->enabled = false;
             }
         }
@@ -113,8 +107,7 @@ function woocommerce_paymaster()
          */
         function is_valid_for_use()
         {
-            if (!in_array(get_option('woocommerce_currency'), array('RUB')))
-            {
+            if (!in_array(get_option('woocommerce_currency'), array('RUB'))) {
                 return false;
             }
 
@@ -161,92 +154,92 @@ function woocommerce_paymaster()
         function init_form_fields()
         {
             $this->form_fields = array(
-                'enabled'                => array(
-                    'title'   => __('Включить/Выключить', 'woocommerce'),
-                    'type'    => 'checkbox',
-                    'label'   => __('Включен', 'woocommerce'),
+                'enabled' => array(
+                    'title' => __('Включить/Выключить', 'woocommerce'),
+                    'type' => 'checkbox',
+                    'label' => __('Включен', 'woocommerce'),
                     'default' => 'yes',
                 ),
-                'title'                  => array(
-                    'title'       => __('Name of payment method', 'woocommerce'),
-                    'type'        => 'text',
+                'title' => array(
+                    'title' => __('Name of payment method', 'woocommerce'),
+                    'type' => 'text',
                     'description' => __('User see this title in order checkout.', 'woocommerce'),
-                    'default'     => __('PayMaster', 'woocommerce'),
+                    'default' => __('PayMaster', 'woocommerce'),
                 ),
-                'paymaster_merchant'     => array(
-                    'title'       => __('ID of merchant', 'woocommerce'),
-                    'type'        => 'text',
+                'paymaster_merchant' => array(
+                    'title' => __('ID of merchant', 'woocommerce'),
+                    'type' => 'text',
                     'description' => __('Please find your merchant id in merchant in PayMaster merchant backoffice', 'woocommerce'),
-                    'default'     => '',
+                    'default' => '',
                 ),
-                'paymaster_secret'       => array(
-                    'title'       => __('Secret', 'woocommerce'),
-                    'type'        => 'password',
+                'paymaster_secret' => array(
+                    'title' => __('Secret', 'woocommerce'),
+                    'type' => 'password',
                     'description' => __('Paymaster secret word, please set it also in PayMaster merchant backoffice', 'woocommerce'),
-                    'default'     => '',
+                    'default' => '',
                 ),
-                'paymaster_hash_method'  => array(
-                    'title'       => __('Hash method', 'woocommerce'),
-                    'type'        => 'select',
-                    'options'     => array(
-                        'md5'    => 'md5',
-                        'sha1'   => 'sha1',
+                'paymaster_hash_method' => array(
+                    'title' => __('Hash method', 'woocommerce'),
+                    'type' => 'select',
+                    'options' => array(
+                        'md5' => 'md5',
+                        'sha1' => 'sha1',
                         'sha256' => 'sha256',
                     ),
                     'description' => __('Setup hash method calculation, attention: you must set it same in PayMaster merchant backoffice', 'woocommerce'),
-                    'default'     => 'md5',
+                    'default' => 'md5',
                 ),
                 'paymaster_vat_products' => array(
-                    'title'       => __('Paymaster VAT products', 'woocommerce'),
-                    'type'        => 'select',
-                    'options'     => array(
-                        'vat18'  => __('VAT 18%'),
-                        'vat10'  => __('VAT 10%'),
+                    'title' => __('Paymaster VAT products', 'woocommerce'),
+                    'type' => 'select',
+                    'options' => array(
+                        'vat18' => __('VAT 18%'),
+                        'vat10' => __('VAT 10%'),
                         'vat118' => __('VAT formula 18/118'),
                         'vat110' => __('VAT formula 10/110'),
-                        'vat0'   => __('VAT 0%'),
+                        'vat0' => __('VAT 0%'),
                         'no_vat' => __('No VAT'),
                     ),
                     'description' => __('Setup VAT for products', 'woocommerce'),
-                    'default'     => 'vat18',
+                    'default' => 'vat18',
                 ),
                 'paymaster_vat_delivery' => array(
-                    'title'       => __('Paymaster VAT delivery', 'woocommerce'),
-                    'type'        => 'select',
-                    'options'     => array(
-                        'vat18'  => __('VAT 18%'),
-                        'vat10'  => __('VAT 10%'),
+                    'title' => __('Paymaster VAT delivery', 'woocommerce'),
+                    'type' => 'select',
+                    'options' => array(
+                        'vat18' => __('VAT 18%'),
+                        'vat10' => __('VAT 10%'),
                         'vat118' => __('VAT formula 18/118'),
                         'vat110' => __('VAT formula 10/110'),
-                        'vat0'   => __('VAT 0%'),
+                        'vat0' => __('VAT 0%'),
                         'no_vat' => __('No VAT'),
                     ),
                     'description' => __('Setup VAT for delivery', 'woocommerce'),
-                    'default'     => 'no_vat',
+                    'default' => 'no_vat',
                 ),
                 'paymaster_order_status' => array(
-                    'title'       => __('Order status', 'woocommerce'),
-                    'type'        => 'select',
-                    'options'     => wc_get_order_statuses(),
+                    'title' => __('Order status', 'woocommerce'),
+                    'type' => 'select',
+                    'options' => wc_get_order_statuses(),
                     'description' => __('Setup order status after successfull payment', 'woocommerce'),
                 ),
-                'debug'                  => array(
-                    'title'   => __('Debug', 'woocommerce'),
-                    'type'    => 'checkbox',
-                    'label'   => __('Switch on logging in file (<code>woocommerce/logs/paypal.txt</code>)', 'woocommerce'),
+                'debug' => array(
+                    'title' => __('Debug', 'woocommerce'),
+                    'type' => 'checkbox',
+                    'label' => __('Switch on logging in file (<code>woocommerce/logs/paypal.txt</code>)', 'woocommerce'),
                     'default' => 'no',
                 ),
-                'description'            => array(
-                    'title'       => __('Description', 'woocommerce'),
-                    'type'        => 'textarea',
+                'description' => array(
+                    'title' => __('Description', 'woocommerce'),
+                    'type' => 'textarea',
                     'description' => __('Description of payment method which user can see in you site.', 'woocommerce'),
-                    'default'     => 'Оплата с помощью сервиса приема платежей PayMaster.',
+                    'default' => 'Оплата с помощью сервиса приема платежей PayMaster.',
                 ),
-                'instructions'           => array(
-                    'title'       => __('Instructions', 'woocommerce'),
-                    'type'        => 'textarea',
+                'instructions' => array(
+                    'title' => __('Instructions', 'woocommerce'),
+                    'type' => 'textarea',
                     'description' => __('Instructions which can added in page of thank-you-payment page.', 'woocommerce'),
-                    'default'     => 'Оплата с помощью сервиса приема платежей PayMaster. Спасибо за оплату.',
+                    'default' => 'Оплата с помощью сервиса приема платежей PayMaster. Спасибо за оплату.',
                 ),
             );
         }
@@ -256,8 +249,7 @@ function woocommerce_paymaster()
          **/
         function payment_fields()
         {
-            if ($this->description)
-            {
+            if ($this->description) {
                 echo wpautop(wptexturize($this->description));
             }
         }
@@ -277,67 +269,42 @@ function woocommerce_paymaster()
 
             $crc = $this->paymaster_merchant . ':' . $out_summ . ':' . $order_id . ':' . $this->paymaster_key1;
 
-            $notify_url  = get_site_url() . '/' . '?wc-api=wc_paymaster&paymaster=result';
+            $notify_url = get_site_url() . '/' . '?wc-api=wc_paymaster&paymaster=result';
             $success_url = get_site_url() . '/' . '?wc-api=wc_paymaster&paymaster=success';
-            $fail_url    = get_site_url() . '/' . '?wc-api=wc_paymaster&paymaster=fail';
+            $fail_url = get_site_url() . '/' . '?wc-api=wc_paymaster&paymaster=fail';
 
-            // Тоже странный гюк не обнаружил нет валюты
-            if (!isset($order->currency)) {
-                $order->currency = "RUB";
-            }
 
             $args = array(
                 // Merchant
-                'LMI_MERCHANT_ID'              => $this->paymaster_merchant,
-                'LMI_PAYMENT_AMOUNT'           => $out_summ,
-                'LMI_PAYMENT_NO'               => $order_id,
-                'LMI_CURRENCY'                 => $order->currency,
-                'LMI_PAYMENT_DESC'             => 'Оплата заказа №' . $order_id,
+                'LMI_MERCHANT_ID' => $this->paymaster_merchant,
+                'LMI_PAYMENT_AMOUNT' => $out_summ,
+                'LMI_PAYMENT_NO' => $order_id,
+                'LMI_CURRENCY' => $order->currency,
+                'LMI_PAYMENT_DESC' => 'Оплата заказа №' . $order_id,
                 'LMI_PAYMENT_NOTIFICATION_URL' => $notify_url,
-                'LMI_SUCCESS_URL'              => $success_url,
-                'LMI_FAILURE_URL'              => $fail_url,
-                'SIGN'                         => md5($crc),
+                'LMI_SUCCESS_URL' => $success_url,
+                'LMI_FAILURE_URL' => $fail_url,
+                'SIGN' => md5($crc),
             );
 
             $pos = 0;
-
-            $products = $order->get_items();
-
             //Получам продукты в форме
-            foreach ($products as $product)
-            {
-                // Странный глюк обнаружился в новой версии WP
-                // Поменялись названия полей,
-                // было: quantity стало: qty
-                // было: total стало: line_total
-                if (isset($product['quantity']) && isset($product['total'])) {
-                    $qty = $product['quantity'];
-                    $price = number_format($product['total'] / $product['quantity'], 2, '.', '');
-                } else {
-                    $qty = $product['qty'];
-                    $price = number_format($product['line_total'] / $product['qty'], 2, '.', '');
-                }
-
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"]  = $product['name'];
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"]   = $qty;
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = $price;
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"]   = $this->paymaster_vat_products;
+            foreach ($order->get_items() as $product) {
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"] = $product['name'];
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"] = $product['quantity'];
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = number_format($product['total'] / $product['quantity'], 2, '.', '');
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"] = $this->paymaster_vat_products;
                 $pos++;
             }
 
-            // Проверяем предварительно, если ли доставка
-            // В данном случае нет, выходим
-            if (isset($order->shipping_total)) {
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"]  = 'Доставка заказа №' . $order_id;
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"]   = 1;
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = number_format($order->shipping_total, 2, '.', '');
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"]   = $this->paymaster_vat_delivery;
-            }
+            $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"] = 'Доставка заказа №' . $order_id;
+            $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"] = 1;
+            $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = number_format($order->shipping_total, 2, '.', '');
+            $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"] = $this->paymaster_vat_delivery;
 
             $args_array = array();
 
-            foreach ($args as $key => $value)
-            {
+            foreach ($args as $key => $value) {
                 $args_array[] = '<input type="hidden" name="' . esc_attr($key) . '" value="' . esc_attr($value) . '" />';
             }
 
@@ -356,7 +323,7 @@ function woocommerce_paymaster()
             $order = new WC_Order($order_id);
 
             return array(
-                'result'   => 'success',
+                'result' => 'success',
                 'redirect' => add_query_arg('order', $order_id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay')))),
             );
         }
@@ -377,8 +344,7 @@ function woocommerce_paymaster()
         {
             $hash = $posted['LMI_HASH'];
 
-            if ($hash == $this->get_hash($posted))
-            {
+            if ($hash == $this->get_hash($posted)) {
                 echo 'OK';
 
                 return true;
@@ -418,7 +384,7 @@ function woocommerce_paymaster()
 
             //Теперь получаем валюту заказа, то что была в заказе
 
-            $LMI_CURRENCY = (isset($order->currency)) ? $order->currency : (isset($posted['LMI_CURRENCY']) ? $posted['LMI_CURRENCY'] : "RUB");
+            $LMI_CURRENCY = $order->currency;
 
             $LMI_PAID_AMOUNT = $posted['LMI_PAID_AMOUNT'];
 
@@ -456,33 +422,25 @@ function woocommerce_paymaster()
         {
             global $woocommerce;
 
-            if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'result')
-            {
+            if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'result') {
                 @ob_clean();
 
                 $_POST = stripslashes_deep($_POST);
 
-                if ($this->check_hash_value($_POST))
-                {
+                if ($this->check_hash_value($_POST)) {
                     do_action('valid-paymaster-standard-request', $_POST);
-                }
-                else
-                {
+                } else {
                     wp_die('Request Failure');
                 }
-            }
-            else if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'success')
-            {
+            } else if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'success') {
                 $orderId = $_POST['LMI_PAYMENT_NO'];
-                $order   = new WC_Order($orderId);
+                $order = new WC_Order($orderId);
                 WC()->cart->empty_cart();
 
                 wp_redirect($this->get_return_url($order));
-            }
-            else if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'fail')
-            {
+            } else if (isset($_GET['paymaster']) and $_GET['paymaster'] == 'fail') {
                 $orderId = $_POST['LMI_PAYMENT_NO'];
-                $order   = new WC_Order($orderId);
+                $order = new WC_Order($orderId);
                 $order->update_status('failed', __('Платеж не оплачен', 'woocommerce'));
 
                 wp_redirect($order->get_cancel_order_url());
@@ -503,8 +461,7 @@ function woocommerce_paymaster()
             $order = new WC_Order($orderID);
 
             // Check order not already completed
-            if ($order->status == 'completed')
-            {
+            if ($order->status == 'completed') {
                 exit;
             }
 
@@ -515,6 +472,28 @@ function woocommerce_paymaster()
 
             exit;
         }
+
+
+        /**
+         * Logger function
+         * @param  [type] $var  [description]
+         * @param  string $text [description]
+         * @return [type]       [description]
+         */
+        public function logger($var, $text = '')
+        {
+            // Название файла
+            $loggerFile = __DIR__ . '/logger.log';
+            if (is_object($var) || is_array($var)) {
+                $var = (string)print_r($var, true);
+            } else {
+                $var = (string)$var;
+            }
+            $string = date("Y-m-d H:i:s") . " - " . $text . ' - ' . $var . "\n";
+            file_put_contents($loggerFile, $string, FILE_APPEND);
+        }
+
+
     }
 
     /**
