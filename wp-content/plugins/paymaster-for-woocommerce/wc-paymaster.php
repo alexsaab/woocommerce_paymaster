@@ -3,12 +3,10 @@
 Plugin Name: PayMaster Payment Gateway
 Plugin URI: https://www.agaxx.com
 Description: Allows you to use PayMaster payment gateway with the WooCommerce plugin.
-Version: 1.0
+Version: 1.3
 Author: Alex Agafonov
 Author URI: https://www.agaxx.com
  */
-
-//TODO: Выбор платежной системы на стороне магазина
 
 if (!defined('ABSPATH')) {
     exit;
@@ -428,6 +426,12 @@ function woocommerce_paymaster()
                 $_POST = stripslashes_deep($_POST);
 
                 if ($this->check_hash_value($_POST)) {
+
+                    // Add transaction information for Paymaster
+                    if ($this->debug) {
+                        $this->add_transaction_info($_POST);
+                    }
+
                     do_action('valid-paymaster-standard-request', $_POST);
                 } else {
                     wp_die('Request Failure');
@@ -447,6 +451,26 @@ function woocommerce_paymaster()
                 exit;
             }
 
+        }
+
+        /**
+         * Add comment to order with info about transactions
+         * @param $post
+         */
+        private function add_transaction_info($post)
+        {
+            global $woocommerce;
+            $orderId = $post['LMI_PAYMENT_NO'];
+            $order = new WC_Order($orderId);
+            $message = 'Транзакция была проведена на сайте платёжной системы Paymaster. Номер транзакции: ' .
+                $post['LMI_SYS_PAYMENT_ID'] . '. ' .
+                'Дата платежа: ' . $post['LMI_SYS_PAYMENT_DATE'] . '. ' .
+                'Валюта и сумма платежа: ' . $post['LMI_PAID_AMOUNT'] . ' ' . $post['LMI_PAID_CURRENCY'] . '. ' .
+                'Способ платежа, выбранный пользователем: ' . $post['LMI_PAYMENT_METHOD'] . '. ' .
+                'Идентификатор плательщика в платежной системе: ' . $post['LMI_PAYER_IDENTIFIER'] . '. ' .
+                'IP адрес плательщика: ' . $post['LMI_PAYER_IP_ADDRESS'] . '.';
+            $order->add_order_note($message);
+            return;
         }
 
         /**
