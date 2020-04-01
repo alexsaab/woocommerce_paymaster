@@ -71,6 +71,7 @@ function woocommerce_paymaster()
             $this->paymaster_vat_products = $this->get_option('paymaster_vat_products');
             $this->paymaster_vat_delivery = $this->get_option('paymaster_vat_delivery');
             $this->paymaster_order_status = $this->get_option('paymaster_order_status');
+            $this->method_description = __( 'PayMaster payment method redirects customers to PayMaster payment gateway and make payment here', 'woocommerce' );
             $this->debug = $this->get_option('debug');
             $this->description = $this->get_option('description');
             $this->instructions = $this->get_option('instructions');
