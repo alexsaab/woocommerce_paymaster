@@ -39,5 +39,19 @@ Allows you to use Paymaster payment gateway with the WooCommerce plugin.
 
 
 == Changelog ==
+
+== Changelog ==
+= 1.4 =
+* Ошибки устранены + совместитмость с php 7.3
+
+= 1.3 =
+* Устранены баги
+
+= 1.2 =
+* Устранены баги
+
+= 1.1 =
+* Устранены баги
+
 = 1.0 =
 * Релиз плагина
