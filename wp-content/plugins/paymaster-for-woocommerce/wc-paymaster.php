@@ -60,6 +60,7 @@ function woocommerce_paymaster()
             $this->icon = apply_filters('woocommerce_paymaster_icon', '' . $plugin_dir . 'paymaster.png');
             $this->has_fields = false;
             $this->liveurl = 'https://paymaster.ru/Payment/Init';
+            $this->method_description = __( 'PayMaster payment method redirects customers to PayMaster payment gateway and make payment here.', 'woocommerce' );
             // Load the settings
             $this->init_form_fields();
             $this->init_settings();
@@ -71,7 +72,6 @@ function woocommerce_paymaster()
             $this->paymaster_vat_products = $this->get_option('paymaster_vat_products');
             $this->paymaster_vat_delivery = $this->get_option('paymaster_vat_delivery');
             $this->paymaster_order_status = $this->get_option('paymaster_order_status');
-            $this->method_description = __( 'PayMaster payment method redirects customers to PayMaster payment gateway and make payment here', 'woocommerce' );
             $this->debug = $this->get_option('debug');
             $this->description = $this->get_option('description');
             $this->instructions = $this->get_option('instructions');
@@ -294,7 +294,7 @@ function woocommerce_paymaster()
             $order = new WC_Order($order_id);
             return array(
                 'result' => 'success',
-                'redirect' => add_query_arg('order', $order_id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay')))),
+                'redirect' => add_query_arg('order', $order_id, add_query_arg('key', $order->order_key, get_permalink(wc_get_page_id('pay')))),
             );
         }
 
