@@ -287,23 +287,24 @@ function woocommerce_paymaster()
 
             $pos = 0;
             //Получам продукты в форме
-            foreach ($order->get_items() as $product) {
-
-
-                if ((int) $product->get_total() > 0) {
-                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"] = $product['name'];
-                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"] = $product->get_quantity();
-                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = round($product->get_total() / $product->get_quantity(), 0);
+            foreach ($order->get_items() as $item_id => $item) {
+                if ((int) $item->get_total() > 0) {
+                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"] = $item['name'];
+                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"] = $item->get_quantity();
+                    $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] =
+                        number_format(round(($item->get_total()+$item->get_subtotal_tax()) / $item->get_quantity(),
+                            0),2,'.','');
                     $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"] = $this->paymaster_vat_products;
                     $pos++;
                 }
-
             }
 
-            if ((int)$order->shipping_total > 0) {
+            if ((int)$order->get_total_shipping() > 0) {
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].NAME"] = 'Доставка заказа №' . $order_id;
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].QTY"] = 1;
-                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] = round($order->shipping_total, 0);
+                $args["LMI_SHOPPINGCART.ITEM[{$pos}].PRICE"] =  number_format(
+                        round($order->get_total_shipping() + $order->get_shipping_tax(), 0), 0,
+                        '.', '');
                 $args["LMI_SHOPPINGCART.ITEM[{$pos}].TAX"] = $this->paymaster_vat_delivery;
             }
 
@@ -417,17 +418,7 @@ function woocommerce_paymaster()
          **/
         public function getOrderTotal($order)
         {
-            $amount = 0;
-            //get products
-            foreach ($order->get_items() as $product) {
-                if ($product->get_total() > 0) {
-                    $amount += round($product->get_total() / $product->get_quantity(), 0)*$product->get_quantity();
-                }
-            }
-            if ((int)$order->shipping_total > 0) {
-                $amount += round($order->shipping_total, 0)*1;
-            }
-            return number_format($amount, 2, '.', '');
+            return number_format($order->get_total(), 2, '.', '');
         }
 
         /**
